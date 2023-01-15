@@ -29,10 +29,10 @@ builder.Services.AddSwaggerExamplesFromAssemblies(Assembly.GetEntryAssembly());
 
 builder.Services.AddCors(option =>
 {
-    option.AddPolicy("Client Network", policyBuilder =>
+    option.AddPolicy("ClientNetwork", policyBuilder =>
     {
         policyBuilder
-            .WithOrigins("https://localhost:4200")
+            .WithOrigins("http://localhost:4200")
             .AllowAnyMethod()
             .AllowAnyHeader();
     });
@@ -58,7 +58,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.UseCors("Client Network");
+app.UseCors("ClientNetwork");
 
 app.UseAuthentication();
 app.UseAuthorization();

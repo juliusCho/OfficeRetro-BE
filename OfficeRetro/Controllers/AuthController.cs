@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using OfficeRetro.Context;
+using OfficeRetro.Helpers;
 using OfficeRetro.Models;
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -33,10 +34,15 @@ public class AuthController : ControllerBase
     {
         if (loginInfo is null) return BadRequest();
 
-        var user = await _context.Users.FirstOrDefaultAsync(u => u.Email.Equals(loginInfo.Email));
+        var user = await _context.Users.AsNoTracking()
+            .FirstOrDefaultAsync(u => u.Email.Equals(loginInfo.Email));
+
         if (user is null) return NotFound(new { Message = LOGIN_NO_EMAIL });
-        
-        if (!user.Password.Equals(loginInfo.Password)) return Unauthorized(new { Message = LOGIN_PW_INCORRECt });
+
+        if (!PasswordHasher.VerifyPassword(loginInfo.Password, user.Password))
+        {
+            return Unauthorized(new { Message = LOGIN_PW_INCORRECt });
+        }
 
         return Ok();
     }
@@ -49,7 +55,13 @@ public class AuthController : ControllerBase
     {
         if (signupInfo is null) return BadRequest();
 
-        var user = await _context.Users.FirstOrDefaultAsync(u => u.Email.Equals(signupInfo.Email));
+        signupInfo.Password = PasswordHasher.EncryptPassword(signupInfo.Password);
+        signupInfo.Role = "User";
+        signupInfo.Token = "";
+
+        var user = await _context.Users.AsNoTracking()
+            .FirstOrDefaultAsync(u => u.Email.Equals(signupInfo.Email));
+
         if (user is not null) return Conflict(new { Message = SIGNUP_EMAIL_EXISTS });
 
         await _context.Users.AddAsync(signupInfo);
