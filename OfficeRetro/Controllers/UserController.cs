@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using OfficeRetro.Context;
 using OfficeRetro.Models;
@@ -19,6 +20,7 @@ public class UserController : ControllerBase
     }
 
     [HttpGet]
+    [Authorize]
     public async Task<ActionResult<User>> GetUsers()
     {
         return Ok(await _context.Users.AsNoTracking().ToListAsync());

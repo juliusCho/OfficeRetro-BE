@@ -16,7 +16,6 @@ public class PasswordHasher
         RandomGenerator.GetBytes(salt);
 
         var key = new Rfc2898DeriveBytes(password, salt, Iterations, HashAlgorithmName.SHA512);
-
         var hash = key.GetBytes(HashSize);
 
         var encrypteBytes = new byte[SaltSize + HashSize];
@@ -36,10 +35,7 @@ public class PasswordHasher
         Array.Copy(encrypteBytes, 0, salt, 0, SaltSize);
 
         var key = new Rfc2898DeriveBytes(password, salt, Iterations, HashAlgorithmName.SHA512);
-
         var hash = key.GetBytes(HashSize);
-
-        Array.Copy(encrypteBytes, SaltSize, hash, 0, HashSize);
 
         var result = true;
 
