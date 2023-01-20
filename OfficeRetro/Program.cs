@@ -57,7 +57,7 @@ builder.Services.AddAuthentication(builder =>
     option.TokenValidationParameters = new TokenValidationParameters
     {
         ValidateIssuerSigningKey = true,
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("IamsoverylongestIamsoverylongestIamsoverylongestIamsoverylongestIamsoverylongestIamsoverylongestIamsoverylongestIamsoverylongest")),
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes("IamsoverylongestIamsoverylongestIamsoverylongestIamsoverylongestIamsoverylongestIamsoverylongestIamsoverylongestIamsoverylongest")),
         ValidateAudience = false,
         ValidateIssuer = false,
         ClockSkew = TimeSpan.Zero

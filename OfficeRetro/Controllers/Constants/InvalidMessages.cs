@@ -7,6 +7,12 @@ public static class InvalidMessages
         public const string BAD_PARAM = "Valid information is required";
     }
 
+    public record Auth
+    {
+        public const string INVALID_TOKEN = "Token is invalid";
+        public const string TOKEN_EXPIRED = "Session was expired. Please login again";
+    }
+
     public record Login
     {
         public const string NO_EMAIL = "The email was not registered";

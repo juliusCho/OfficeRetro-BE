@@ -5,10 +5,12 @@ using OfficeRetro.Context;
 using OfficeRetro.Controllers.Constants;
 using OfficeRetro.Helpers;
 using OfficeRetro.Models;
+using OfficeRetro.Models.Dto;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Globalization;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -42,7 +44,7 @@ public class AuthController : ControllerBase
             return BadRequest(InvalidMessages.Common.BAD_PARAM);
         }
 
-        var user = await _context.Users.AsNoTracking()
+        var user = await _context.Users
             .FirstOrDefaultAsync(u => u.Email.Equals(loginInfo.Email));
 
         if (user is null) return NotFound(new { Message = InvalidMessages.Login.NO_EMAIL });
@@ -52,7 +54,19 @@ public class AuthController : ControllerBase
             return BadRequest(new { Message = InvalidMessages.Login.PW_INCORRECT });
         }
 
-        return Ok(new {Token = CreateJwt(user) });
+        var tokenApi = new TokenApiDto
+        {
+            AccessToken = CreateJwt(user),
+            RefreshToken = await CreateRefreshToken()
+        };
+
+        user.Token = tokenApi.AccessToken;
+        user.RefreshToken = tokenApi.RefreshToken;
+        user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(2);
+
+        await _context.SaveChangesAsync();
+
+        return Ok(tokenApi);
     }
 
     [HttpPost("register")]
@@ -91,6 +105,55 @@ public class AuthController : ControllerBase
         return Ok();
     }
 
+    [HttpPost("refresh")]
+    [SwaggerResponse(StatusCodes.Status200OK)]
+    [SwaggerResponse(StatusCodes.Status400BadRequest, InvalidMessages.Common.BAD_PARAM)]
+    [SwaggerResponse(StatusCodes.Status403Forbidden, InvalidMessages.Auth.INVALID_TOKEN)]
+    [SwaggerResponse(StatusCodes.Status401Unauthorized, InvalidMessages.Auth.TOKEN_EXPIRED)]
+    public async Task<IActionResult> RefreshToken(TokenApiDto tokenApi)
+    {
+        if (
+            tokenApi is null ||
+            string.IsNullOrWhiteSpace(tokenApi.AccessToken) ||
+            string.IsNullOrWhiteSpace(tokenApi.RefreshToken)) 
+        {
+            return BadRequest(InvalidMessages.Common.BAD_PARAM);
+        }
+
+        var principal = GetPrincipalFromExpiredToken(tokenApi.AccessToken);
+        var name = principal.Identity?.Name;
+        
+        if (string.IsNullOrWhiteSpace(name)) return Forbid(InvalidMessages.Auth.INVALID_TOKEN);
+
+        var nameClaimSeparator = "|OfficeRetroNameClaimSeparator|";
+        var firstNameEndAt = name.IndexOf(nameClaimSeparator);
+        var lastNameStartAt = name.IndexOf(nameClaimSeparator) + nameClaimSeparator.Length;
+
+        var firstName = name.Substring(0, firstNameEndAt);
+        var lastName = name.Substring(lastNameStartAt);
+
+        var user = await _context.Users.FirstOrDefaultAsync(user => user.FirstName.Equals(firstName) && user.LastName.Equals(lastName));
+        if (user is null || !user.RefreshToken.Equals(tokenApi.RefreshToken))
+        {
+            return Forbid(InvalidMessages.Auth.INVALID_TOKEN);
+        }
+
+        if (user.RefreshTokenExpiryTime <= DateTime.UtcNow) return Unauthorized(InvalidMessages.Auth.TOKEN_EXPIRED);
+
+        var newTokenApi = new TokenApiDto
+        {
+            AccessToken = CreateJwt(user),
+            RefreshToken = await CreateRefreshToken()
+        };
+
+        user.Token = newTokenApi.AccessToken;
+        user.RefreshToken = newTokenApi.RefreshToken;
+
+        await _context.SaveChangesAsync();
+
+        return Ok(newTokenApi);
+    }
+
     private string CreateJwt(User user)
     {
         var jwtTokenHandler = new JwtSecurityTokenHandler();
@@ -100,8 +163,7 @@ public class AuthController : ControllerBase
         var identity = new ClaimsIdentity(new Claim[]
         {
             new Claim(ClaimTypes.Role, user.Role),
-            new Claim(ClaimTypes.Name, user.LastName),
-            new Claim(ClaimTypes.GivenName, user.FirstName)
+            new Claim(ClaimTypes.Name, $"{user.FirstName}|OfficeRetroNameClaimSeparator|{user.LastName}")
         });
 
         var credentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha512Signature);
@@ -109,13 +171,56 @@ public class AuthController : ControllerBase
         var tokenDescriptor = new SecurityTokenDescriptor
         {
             Subject = identity,
-            Expires = DateTime.Now.AddHours(1),
+            Expires = DateTime.UtcNow.AddMinutes(1),
             SigningCredentials = credentials
         };
 
         var token = jwtTokenHandler.CreateToken(tokenDescriptor);
 
         return jwtTokenHandler.WriteToken(token);
+    }
+
+    private async Task<string> CreateRefreshToken()
+    {
+        var tokenBytes = RandomNumberGenerator.GetBytes(64);
+
+        var refreshToken = Convert.ToBase64String(tokenBytes);
+
+        var isMatchingUserExist = await _context.Users.AsNoTracking().AnyAsync(user => user.RefreshToken.Equals(refreshToken));
+
+        if (isMatchingUserExist) return await CreateRefreshToken();
+
+        return refreshToken;
+    }
+
+    private ClaimsPrincipal GetPrincipalFromExpiredToken(string token)
+    {
+        var tokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes("IamsoverylongestIamsoverylongestIamsoverylongestIamsoverylongestIamsoverylongestIamsoverylongestIamsoverylongestIamsoverylongest")),
+            ValidateAudience = false,
+            ValidateIssuer = false,
+            ClockSkew = TimeSpan.Zero,
+            ValidateLifetime = false
+        };
+
+        var tokenHandler = new JwtSecurityTokenHandler();
+
+        var principal = tokenHandler.ValidateToken(token, tokenValidationParameters, out SecurityToken securityToken);
+
+        var jwtSecurityToken = (JwtSecurityToken)securityToken;
+
+        if (
+            jwtSecurityToken is null || 
+            !jwtSecurityToken.Header.Alg.Equals(
+                SecurityAlgorithms.HmacSha512Signature, 
+                StringComparison.InvariantCulture))
+        {
+            throw new SecurityTokenException("Invalid token was received");
+        }
+
+        return principal;
     }
 
     private bool IsValidEmail(string email)
