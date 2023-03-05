@@ -3,7 +3,7 @@ using OfficeRetro.Shared.Exceptions.Inquiry;
 
 namespace OfficeRetro.Domain.Inquiry.Exceptions;
 
-internal class InquiryContentMaxException : AuthMaxException
+internal class InquiryContentMaxException : InquiryMaxException
 {
     public InquiryContentMaxException(ushort length)
         : base(InquiryExceptionMessages.CONTENT_MAX, length) { }

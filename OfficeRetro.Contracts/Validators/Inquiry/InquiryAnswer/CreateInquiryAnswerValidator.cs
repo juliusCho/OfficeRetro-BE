@@ -8,8 +8,7 @@ public class CreateInquiryAnswerValidator : AbstractValidator<CreateInquiryAnswe
 {
     public CreateInquiryAnswerValidator()
     {
-        RuleFor(a => a.UserKey).NotNull().NotEmpty();
-        RuleFor(a => a.UserRole).NotNull().IsInEnum();
+        RuleFor(a => a.InquiryKey).NotNull().NotEmpty();
         RuleFor(a => a.Content).NotNull().NotEmpty();
         RuleForEach(a => a.Files).SetValidator(new CreateInquiryFileValidator());
     }

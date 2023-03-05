@@ -11,7 +11,7 @@ public interface IInquiryFactory
         string title,
         string content,
         string password,
-        IEnumerable<ICreateInquiryFile> inquiryFiles);
+        IEnumerable<ICreateInquiryFile> files);
 
     IEnumerable<InquiryFile> CreateFileCollection(
         IEnumerable<IUpdateInquiryFile> files);

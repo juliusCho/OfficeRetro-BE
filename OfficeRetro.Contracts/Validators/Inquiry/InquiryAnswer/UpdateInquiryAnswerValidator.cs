@@ -9,7 +9,7 @@ public class UpdateInquiryAnswerValidator : AbstractValidator<UpdateInquiryAnswe
     public UpdateInquiryAnswerValidator()
     {
         RuleFor(a => a.Key).NotNull().NotEmpty();
-        RuleFor(a => a.UserKey).NotNull().NotEmpty();
+        RuleFor(a => a.InquiryKey).NotNull().NotEmpty();
         RuleFor(a => a.Content).NotNull().NotEmpty();
         RuleFor(a => a.CreatedAt).NotNull().NotEmpty();
         RuleForEach(a => a.Files).SetValidator(new UpdateInquiryFileValidator());

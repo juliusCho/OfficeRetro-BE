@@ -7,14 +7,14 @@ public class Inquiry
 {
     public long Id { get; }
     public Guid Key { get; private set; }
-
+#pragma warning disable
     private InquiryWriter _writer;
     private InquiryTitle _title;
     private InquiryContent _content;
     private InquiryPassword _password;
     private DateTime _createdAt;
     private DateTime _modifiedAt;
-
+#pragma warning restore
     private readonly LinkedList<InquiryFile> _files = new();
 
     internal Inquiry(

@@ -24,8 +24,10 @@ public record InquiryExceptionMessages
         public const string ALREADY_EXISTS = "File already exists";
     }
 
-    public record Auth
+    public record Answer
     {
-        public const string EMPTY_URL = "File Url is empty";
+        public const string INVALID_USER = "Answer writer info is invalid";
+        public const string USER_NO_PERMIT = "The writer does not have permission to write an answer";
+        public const string EMPTY_TARGET = "Inquiry for answer is empty";
     }
 }

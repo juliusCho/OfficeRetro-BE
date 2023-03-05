@@ -1,8 +1,8 @@
 ﻿namespace OfficeRetro.Shared.Exceptions.Inquiry;
 
-public abstract class AuthNotFoundException : InquiryException
+public abstract class InquiryNotFoundException : InquiryException
 {
-    public AuthNotFoundException(string message) 
+    public InquiryNotFoundException(string message) 
         : base(
             $"[NotFoundException] {message}",
             System.Net.HttpStatusCode.NotFound) { }
