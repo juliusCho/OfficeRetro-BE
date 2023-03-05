@@ -3,12 +3,38 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.4.33205.214
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OfficeRetro", "OfficeRetro\OfficeRetro.csproj", "{416F3A48-4411-48B5-BDBE-DBDB1676BACD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OfficeRetro.Api", "OfficeRetro.Api\OfficeRetro.Api.csproj", "{416F3A48-4411-48B5-BDBE-DBDB1676BACD}"
+	ProjectSection(ProjectDependencies) = postProject
+		{4CBB1393-FEB3-4637-BA04-5448A7D346D4} = {4CBB1393-FEB3-4637-BA04-5448A7D346D4}
+		{68DB1E38-A548-456B-9BB8-CD6215D583BA} = {68DB1E38-A548-456B-9BB8-CD6215D583BA}
+		{F138BB35-AF42-448D-BB20-2D296EE10D90} = {F138BB35-AF42-448D-BB20-2D296EE10D90}
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{32EE67EF-D9E1-4373-A004-3A5AE854C66C}"
 	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
 		.gitignore = .gitignore
 	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OfficeRetro.Application", "OfficeRetro.Application\OfficeRetro.Application.csproj", "{E2B9AE3E-F1E5-499D-9CE0-679E728BF6A4}"
+	ProjectSection(ProjectDependencies) = postProject
+		{68DB1E38-A548-456B-9BB8-CD6215D583BA} = {68DB1E38-A548-456B-9BB8-CD6215D583BA}
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OfficeRetro.Domain", "OfficeRetro.Domain\OfficeRetro.Domain.csproj", "{D095B662-1B3D-4D29-9827-5DDC26CD90C0}"
+	ProjectSection(ProjectDependencies) = postProject
+		{68DB1E38-A548-456B-9BB8-CD6215D583BA} = {68DB1E38-A548-456B-9BB8-CD6215D583BA}
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OfficeRetro.Infrastructure", "OfficeRetro.Infrastructure\OfficeRetro.Infrastructure.csproj", "{F138BB35-AF42-448D-BB20-2D296EE10D90}"
+	ProjectSection(ProjectDependencies) = postProject
+		{68DB1E38-A548-456B-9BB8-CD6215D583BA} = {68DB1E38-A548-456B-9BB8-CD6215D583BA}
+		{E2B9AE3E-F1E5-499D-9CE0-679E728BF6A4} = {E2B9AE3E-F1E5-499D-9CE0-679E728BF6A4}
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OfficeRetro.Shared", "OfficeRetro.Shared\OfficeRetro.Shared.csproj", "{68DB1E38-A548-456B-9BB8-CD6215D583BA}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OfficeRetro.Contracts", "OfficeRetro.Contracts\OfficeRetro.Contracts.csproj", "{4CBB1393-FEB3-4637-BA04-5448A7D346D4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -20,6 +46,26 @@ Global
 		{416F3A48-4411-48B5-BDBE-DBDB1676BACD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{416F3A48-4411-48B5-BDBE-DBDB1676BACD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{416F3A48-4411-48B5-BDBE-DBDB1676BACD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E2B9AE3E-F1E5-499D-9CE0-679E728BF6A4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E2B9AE3E-F1E5-499D-9CE0-679E728BF6A4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E2B9AE3E-F1E5-499D-9CE0-679E728BF6A4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E2B9AE3E-F1E5-499D-9CE0-679E728BF6A4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D095B662-1B3D-4D29-9827-5DDC26CD90C0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D095B662-1B3D-4D29-9827-5DDC26CD90C0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D095B662-1B3D-4D29-9827-5DDC26CD90C0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D095B662-1B3D-4D29-9827-5DDC26CD90C0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F138BB35-AF42-448D-BB20-2D296EE10D90}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F138BB35-AF42-448D-BB20-2D296EE10D90}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F138BB35-AF42-448D-BB20-2D296EE10D90}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F138BB35-AF42-448D-BB20-2D296EE10D90}.Release|Any CPU.Build.0 = Release|Any CPU
+		{68DB1E38-A548-456B-9BB8-CD6215D583BA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{68DB1E38-A548-456B-9BB8-CD6215D583BA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{68DB1E38-A548-456B-9BB8-CD6215D583BA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{68DB1E38-A548-456B-9BB8-CD6215D583BA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4CBB1393-FEB3-4637-BA04-5448A7D346D4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4CBB1393-FEB3-4637-BA04-5448A7D346D4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4CBB1393-FEB3-4637-BA04-5448A7D346D4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4CBB1393-FEB3-4637-BA04-5448A7D346D4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

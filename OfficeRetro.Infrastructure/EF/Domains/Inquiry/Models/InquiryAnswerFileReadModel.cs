@@ -1,0 +1,12 @@
+﻿namespace OfficeRetro.Infrastructure.EF.Domains.Inquiry.Models;
+
+internal class InquiryAnswerFileReadModel
+{
+    public long Id { get; }
+    public Guid Key { get; }
+    public string Url { get; } = string.Empty;
+    public string MimeType { get; } = string.Empty;
+    public DateTime CreatedAt { get; }
+
+    public InquiryAnswerReadModel Answer { get; }
+}
